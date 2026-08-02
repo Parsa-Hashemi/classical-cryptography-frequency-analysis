@@ -66,6 +66,35 @@ def find_key_length(ciphertext):
     return best_len
 
 
+def find_keyword(ciphertext, key_length):
+    columns = []
+    for i in range(key_length):
+        columns.append("")
+
+    index = 0
+    for char in ciphertext:
+        if char.isalpha():
+            col_index = index % key_length
+            columns[col_index] = columns[col_index] + char.upper()
+            index += 1
+
+    keyword_chars = []
+
+    for col in columns:
+        if not col:
+            keyword_chars.append('A')
+            continue
+
+        counts = Counter(col)
+        most_common_char = counts.most_common(1)[0][0]
+
+        shift = (ord(most_common_char) - ord('E')) % 26
+        key_char = chr(shift + ord('A'))
+        keyword_chars.append(key_char)
+
+    return "".join(keyword_chars)
+
+
 def decrypt_vigenere(ciphertext, keyword):
     plaintext = []
     keyword = keyword.upper()
