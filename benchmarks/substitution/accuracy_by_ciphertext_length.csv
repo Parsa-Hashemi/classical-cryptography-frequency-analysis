@@ -1,0 +1,5 @@
+text_length,trials,average_accuracy_percent,exact_plaintext_successes,exact_plaintext_success_rate,exact_key_successes,exact_key_success_rate
+200,20,62.925,3,0.15,0,0.0
+300,20,84.46666666666667,4,0.2,0,0.0
+500,20,82.37,4,0.2,0,0.0
+1000,20,92.975,8,0.4,6,0.3
