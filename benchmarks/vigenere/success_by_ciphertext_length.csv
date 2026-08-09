@@ -1,0 +1,5 @@
+text_length,trials,key_successes,plaintext_successes,key_success_rate,plaintext_success_rate,average_letter_accuracy
+100,20,9,9,0.45,0.45,0.8390000000000001
+200,20,15,15,0.75,0.75,0.9635
+500,20,20,20,1.0,1.0,1.0
+1000,20,20,20,1.0,1.0,1.0
