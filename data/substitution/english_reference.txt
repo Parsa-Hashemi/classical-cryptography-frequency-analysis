@@ -1,0 +1,73 @@
+Clear technical writing explains an idea before it introduces complicated notation.
+A reader should be able to identify the input, the output, and the reason for every
+step. Mathematics becomes useful when definitions are connected to examples and
+when each claim can be checked. A proof starts from accepted assumptions and moves
+through justified statements to a conclusion. An algorithm follows the same habit:
+it receives data, performs a finite sequence of operations, and produces a result.
+
+Discrete mathematics studies structures that can be counted or separated into
+individual cases. Sets collect objects, relations connect them, and functions map
+one collection into another. Logic gives precise rules for combining statements.
+Graphs represent networks by vertices and edges. Paths describe possible routes,
+while trees capture hierarchy without cycles. Counting arguments help determine
+how many configurations are possible before a program attempts to list them.
+
+Probability and statistics are also valuable when exact information is missing.
+An experiment gathers observations, a frequency table summarizes repeated values,
+and a model measures how well a proposed explanation fits the evidence. Large data
+sets usually reveal stable patterns more clearly than short samples. A responsible
+analysis reports uncertainty and does not hide failed trials. Reproducible work uses
+fixed random seeds, documented parameters, and tests whose expected results are
+known in advance.
+
+Cryptography transforms a readable message into a form that should be difficult to
+understand without secret information. Classical ciphers are not secure for modern
+communication, but they demonstrate important mathematical ideas. A Caesar cipher
+shifts every letter by the same amount. A Vigenere cipher repeats several shifts.
+A substitution cipher replaces each alphabet letter with a different letter, so
+single letter frequencies survive even though their names change. A Hill cipher
+groups letters into vectors and multiplies them by a matrix under modular arithmetic.
+
+Natural language is highly structured. In English, some letters occur much more
+often than others. Certain pairs such as TH, HE, IN, and ER are common, and groups
+such as THE, ING, AND, and ION appear repeatedly. A language model records these
+patterns. If a candidate decryption contains likely pairs and triples, its score
+should be higher than a random arrangement. The score is evidence rather than a
+proof, because short messages can accidentally contain misleading patterns.
+
+Hill climbing searches for a better solution by making a small change to the current
+one. For a substitution key, a natural neighboring solution swaps the meanings of
+two cipher letters. The program keeps changes that improve the language score.
+Simulated annealing sometimes accepts a worse change early in the search, which can
+help it escape a local maximum. Several independent restarts increase the chance of
+finding a strong key. Longer ciphertext generally provides a more reliable signal.
+
+Modular arithmetic treats numbers that differ by a multiple of the modulus as
+equivalent. With the English alphabet, A is represented by zero, B by one, and Z by
+twenty five. Addition and multiplication wrap around after twenty six. Division is
+only possible when the divisor has a multiplicative inverse. A matrix used by the
+Hill cipher must therefore have a determinant relatively prime to twenty six. If
+this condition fails, distinct plaintext blocks can collapse to the same ciphertext
+and unique decryption is impossible.
+
+A known plaintext attack assumes that an analyst has matching pieces of the original
+message and encrypted message. For the Hill cipher, enough aligned blocks can be
+placed into plaintext and ciphertext matrices. If the plaintext matrix is invertible,
+the key is obtained by multiplying the ciphertext matrix by the modular inverse of
+the plaintext matrix. Additional known blocks verify that the recovered key is not
+an accidental answer.
+
+Entropy measures uncertainty in a distribution. A repeated symbol has zero entropy,
+while a perfectly uniform alphabet has the largest possible letter entropy. Entropy
+alone does not measure security. A substitution cipher preserves the counts of every
+letter exactly and therefore preserves single letter entropy. A Hill cipher mixes
+letters across positions, and a repeating-key cipher changes frequency patterns, but
+both remain vulnerable to attacks that use structure ignored by a single entropy
+number.
+
+Good software separates mathematical operations from file handling and user input.
+Small functions are easier to test. Validation should reject an empty key, a malformed
+matrix, or ciphertext whose length is incompatible with its block size. Automated
+tests should include a standard example, a complete encrypt-decrypt round trip, and
+an invalid case. A command line demonstration makes the experiment repeatable, while
+clear documentation helps another student explain the code without guessing.
