@@ -1,0 +1,5 @@
+﻿method,length,trials,correct,success_rate
+chi-square,5,5,2,0.4
+chi-square,10,5,5,1.0
+ngram,5,5,2,0.4
+ngram,10,5,5,1.0
