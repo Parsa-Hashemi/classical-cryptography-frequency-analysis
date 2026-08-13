@@ -507,17 +507,6 @@ python -m pytest
 - شمارش حروف، دوگرام و سه‌گرام؛
 - رفتار مشخص توابع آماری برای متن خالی.
 
-## ساخت گزارش PDF
-
-گزارش فارسی در `docs/report.tex` قرار دارد و باید با XeLaTeX ساخته شود تا حروف فارسی درست نمایش داده شوند:
-
-```powershell
-xelatex -interaction=nonstopmode -halt-on-error -output-directory docs docs/report.tex
-xelatex -interaction=nonstopmode -halt-on-error -output-directory docs docs/report.tex
-```
-
-اجرای دوبارهٔ دستور برای کامل‌شدن فهرست و ارجاع‌های داخلی LaTeX است.
-
 ## نکات و محدودیت‌ها
 
 - Brute Force سزار همیشه همهٔ حالت‌ها را تولید می‌کند؛ چیزی که ممکن است خطا کند انتخاب خودکار بهترین حالت است.
