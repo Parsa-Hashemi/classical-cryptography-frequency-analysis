@@ -21,6 +21,47 @@ def clean_ascii_letters(text):
     return "".join(letters)
 
 
+def apply_text_format(template, letters):
+    """Places transformed letters into a template while preserving its format."""
+
+    result = []
+    letter_index = 0
+    last_letter_position = -1
+    template_letter_count = 0
+
+    for position in range(len(template)):
+        if is_english_letter(template[position]):
+            last_letter_position = position
+            template_letter_count = template_letter_count + 1
+
+    extra_letters = letters[template_letter_count:]
+
+    if last_letter_position == -1:
+        result.append(extra_letters)
+
+    for position in range(len(template)):
+        character = template[position]
+
+        if is_english_letter(character):
+            if letter_index < len(letters):
+                transformed = letters[letter_index]
+
+                if character.islower():
+                    transformed = transformed.lower()
+
+                result.append(transformed)
+
+            letter_index = letter_index + 1
+        else:
+            result.append(character)
+
+        # Put padding before trailing punctuation or newlines, not after them.
+        if position == last_letter_position:
+            result.append(extra_letters)
+
+    return "".join(result)
+
+
 def add_length_padding(text, block_size):
     """Adds self-describing padding; A means 1, B means 2, and so on."""
 
@@ -183,7 +224,6 @@ def inverse_matrix_mod(key_matrix):
         inverse_row = []
 
         for column in range(size):
-            # Swapping row and column transposes the cofactor matrix.
             sign = 1
             if (row + column) % 2 == 1:
                 sign = -1
@@ -258,7 +298,7 @@ def transform_blocks(text, matrix):
 
 
 def encrypt(plaintext, key_matrix, padding_mode="length"):
-    """Encrypts text with length padding or without padding."""
+    """Encrypts letters while preserving case, spacing, and punctuation."""
 
     matrix = validate_key_matrix(key_matrix)
     letters = clean_ascii_letters(plaintext)
@@ -274,17 +314,19 @@ def encrypt(plaintext, key_matrix, padding_mode="length"):
     else:
         raise ValueError("padding_mode must be length or none")
 
-    return transform_blocks(letters, matrix)
+    encrypted_letters = transform_blocks(letters, matrix)
+    return apply_text_format(plaintext, encrypted_letters)
 
 
 def decrypt(ciphertext, key_matrix, padding_mode="length"):
-    """Decrypts Hill ciphertext and removes padding in length mode."""
+    """Decrypts letters and restores the format carried by the ciphertext."""
 
     matrix = validate_key_matrix(key_matrix)
     letters = clean_ascii_letters(ciphertext)
 
     if len(letters) % len(matrix) != 0:
-        raise ValueError("ciphertext length must be a multiple of the block size")
+        raise ValueError(
+            "ciphertext length must be a multiple of the block size")
 
     inverse = inverse_matrix_mod(matrix)
     plaintext = transform_blocks(letters, inverse)
@@ -294,7 +336,7 @@ def decrypt(ciphertext, key_matrix, padding_mode="length"):
     elif padding_mode != "none":
         raise ValueError("padding_mode must be length or none")
 
-    return plaintext
+    return apply_text_format(ciphertext, plaintext)
 
 
 def blocks_as_column_matrix(blocks, selected_indexes, block_size):
@@ -314,7 +356,12 @@ def blocks_as_column_matrix(blocks, selected_indexes, block_size):
     return matrix
 
 
-def recover_key_from_known_plaintext(plaintext, ciphertext, block_size):
+def recover_key_from_known_plaintext(
+    plaintext,
+    ciphertext,
+    block_size,
+    maximum_combinations=None
+):
     """Recovers a Hill key from matching plaintext and ciphertext blocks."""
 
     if block_size < 1:
@@ -343,7 +390,15 @@ def recover_key_from_known_plaintext(plaintext, ciphertext, block_size):
 
     indexes = range(block_count)
 
-    for selected_indexes in itertools.combinations(indexes, block_size):
+    combinations = itertools.combinations(indexes, block_size)
+
+    for combination_number, selected_indexes in enumerate(combinations):
+        if (
+            maximum_combinations is not None
+            and combination_number >= maximum_combinations
+        ):
+            break
+
         plain_matrix = blocks_as_column_matrix(
             plain_blocks,
             selected_indexes,
@@ -373,4 +428,41 @@ def recover_key_from_known_plaintext(plaintext, ciphertext, block_size):
     raise ValueError(
         "no invertible set of plaintext blocks was found; "
         "provide more aligned known plaintext"
+    )
+
+
+def recover_key_and_block_size(
+    plaintext,
+    ciphertext,
+    minimum_block_size=2,
+    maximum_block_size=5,
+    maximum_combinations=2000
+):
+    """Tries small block sizes and returns the detected size and Hill key."""
+
+    if minimum_block_size < 1:
+        raise ValueError("minimum_block_size must be positive")
+
+    if maximum_block_size < minimum_block_size:
+        raise ValueError(
+            "maximum_block_size must be at least minimum_block_size"
+        )
+
+    for block_size in range(minimum_block_size, maximum_block_size + 1):
+        try:
+            key = recover_key_from_known_plaintext(
+                plaintext,
+                ciphertext,
+                block_size,
+                maximum_combinations
+            )
+            return block_size, key
+        except ValueError:
+            continue
+
+    raise ValueError(
+        "could not detect an invertible Hill key with a block size from "
+        + str(minimum_block_size)
+        + " to "
+        + str(maximum_block_size)
     )
